@@ -1,9 +1,24 @@
 
-import { useState, type ChangeEvent } from 'react';
+import { useEffect, useState, type ChangeEvent } from 'react';
 import { registerUser } from '../../store/authSlice';
-import { useAppDispatch } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { Status } from '../../globals/types/types';
+import { useNavigate } from 'react-router';
+
 
 const RegisterForm = () => {
+  const Navigate = useNavigate()
+  const { status } = useAppSelector((state) => state.auth)
+
+  useEffect(() => {
+    if (status == Status.SUCCESS) {
+      Navigate("/login")
+    }
+    else if (status == Status.ERROR) {
+      alert("something went wrong")
+    }
+  }, [status])
+
   const dispatch = useAppDispatch()
   const [formData, setFormData] = useState({
     username: '',
@@ -22,9 +37,9 @@ const RegisterForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 px-6 lg:px-8">
+    <div className="min-h-screen bg-[#111827] flex flex-col justify-center py-12 px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-[#F9FAFB]">
           Create your account
         </h2>
 
@@ -84,7 +99,7 @@ const RegisterForm = () => {
             <div>
               <button
                 type="submit"
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#F59E0B] hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
               >
                 Register
               </button>
