@@ -1,9 +1,24 @@
 
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Search, ShoppingCart, Menu, X } from 'lucide-react';
+import { Link } from 'react-router';
+import { useAppSelector } from '../../../../store/hooks';
+
 
 const Navbar = () => {
+  const reduxToken = useAppSelector((store) => store.auth.user.token)
+  const localStorageToken = localStorage.getItem("tokenHoYo")
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
+
+  useEffect(() => {
+    setIsLoggedIn(!!reduxToken || !!localStorageToken) // This will set isLoggedIn to true if either token exists, otherwise false
+    // if(reduxToken && localStorageToken){
+    //   setIsLoggedIn(true)
+    // }
+  }, [])
+
+
   const [isOpen, setIsOpen] = useState(false);
 
   const navLinks = [
@@ -62,10 +77,26 @@ const Navbar = () => {
             </div>
 
             <div className="flex items-center gap-3 border-l border-gray-700 pl-6">
-              <button className="text-sm font-medium hover:text-[#F59E0B]">Login</button>
-              <button className="bg-[#F59E0B] text-[#111827] px-4 py-2 rounded-md text-sm font-bold hover:bg-opacity-90 transition-all">
-                Register
-              </button>
+              {
+                isLoggedIn ? (
+                  <Link to='/logout'><button className="text-sm font-medium hover:text-[#F59E0B]">Logout</button></Link>
+                ) :
+                  (
+                    <>
+                      <Link to="/register">
+                        <button className="bg-[#F59E0B] text-[#111827] px-4 py-2 rounded-md text-sm font-bold hover:bg-opacity-90 transition-all">
+                          Register
+                        </button></Link>
+
+                      <Link to='/login'><button className="text-sm font-medium hover:text-[#F59E0B]">Login</button></Link>
+                    </>
+
+                  )
+
+              }
+
+
+
             </div>
           </div>
 

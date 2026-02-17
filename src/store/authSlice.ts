@@ -17,6 +17,8 @@ interface IUser {
   username: string,
   email: string,
   password: string
+  token: string | null
+
 
 }
 
@@ -29,7 +31,8 @@ const initialState: IAuthState = {
   user: {
     username: "",
     email: "",
-    password: ""
+    password: "",
+    token: null
 
   },
   status: Status.LOADING
@@ -44,12 +47,18 @@ const authSlice = createSlice({
     },
     setStatus(state: IAuthState, action: PayloadAction<Status>) {
       state.status = action.payload
+    },
+    resetStatus(state: IAuthState,) {
+      state.status = Status.LOADING
+    },
+    setToken(state: IAuthState, action: PayloadAction<string>) {
+      state.user.token = action.payload
     }
   }
 
 })
 
-export const { setUser, setStatus } = authSlice.actions
+export const { setUser, setStatus, resetStatus, setToken } = authSlice.actions
 export default authSlice.reducer
 
 
@@ -84,6 +93,14 @@ export function loginUser(data: ILoginUser) {
       console.log(response)
       if (response.status === 200) {
         dispatch(setStatus(Status.SUCCESS))
+        if (response.data.token) {
+          localStorage.setItem("tokenHoYo", response.data.token)
+          dispatch(setToken(response.data.token))
+        }
+        else {
+          dispatch(setStatus(Status.ERROR))
+        }
+
       }
       else {
         dispatch(setStatus(Status.ERROR))

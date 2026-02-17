@@ -1,29 +1,32 @@
 
 import { useEffect, useState, type ChangeEvent } from 'react';
-import { registerUser } from '../../store/authSlice';
+import { registerUser, resetStatus } from '../../store/authSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { Status } from '../../globals/types/types';
-import { useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 
 
 const RegisterForm = () => {
   const Navigate = useNavigate()
   const { status } = useAppSelector((state) => state.auth)
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
     if (status == Status.SUCCESS) {
+      dispatch(resetStatus())
       Navigate("/login")
     }
     else if (status == Status.ERROR) {
       alert("something went wrong")
     }
-  }, [status])
+  }, [status, Navigate, dispatch])
 
-  const dispatch = useAppDispatch()
+
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: '',
+    token: ""
 
   });
 
@@ -99,10 +102,12 @@ const RegisterForm = () => {
             <div>
               <button
                 type="submit"
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#F59E0B] hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-semibold text-[#111827] bg-[#F59E0B] hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
               >
                 Register
               </button>
+              <div className='mt-6 text-center flex gap-2 text-gray-500 font-medium'>Already have Account.<Link to={"/login"}> <p className='text-[#111827] font-bold'>Login here</p></Link></div>
+
             </div>
           </form>
         </div>
