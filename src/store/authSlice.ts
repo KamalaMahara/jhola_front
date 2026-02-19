@@ -2,6 +2,7 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { Status } from "../globals/types/types";
 import axios from "axios";
 import type { AppDispatch } from "./store";
+import API from "../http";
 
 
 
@@ -66,7 +67,7 @@ export default authSlice.reducer
 export function registerUser(data: IUser) {
   return async function registerUserThunk(dispatch: AppDispatch) {
     try {
-      const response = await axios.post("http://localhost:8000/register", data)
+      const response = await API.post("register", data)
       console.log(response)
       if (response.status === 201) {
         dispatch(setStatus(Status.SUCCESS))
@@ -89,7 +90,7 @@ export function registerUser(data: IUser) {
 export function loginUser(data: ILoginUser) {
   return async function loginUserThunk(dispatch: AppDispatch) {
     try {
-      const response = await axios.post("http://localhost:8000/login", data)
+      const response = await API.post("login", data)
       console.log(response)
       if (response.status === 200) {
         dispatch(setStatus(Status.SUCCESS))
@@ -116,7 +117,7 @@ export function loginUser(data: ILoginUser) {
 export function forgotPassword(data: { email: string | null }) {
   return async function forgotPasswordThunk(dispatch: AppDispatch) {
     try {
-      const response = await axios.post("http://localhost:8000/forgot-password", data)
+      const response = await API.post("forgot-password", data)
       console.log(response)
       if (response.status === 200) {
         dispatch(setStatus(Status.SUCCESS))

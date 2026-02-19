@@ -4,6 +4,8 @@ import { Provider } from "react-redux"
 import store from "./store/store"
 import Login from "./pages/user/Login"
 import Home from "./pages/Home/Home"
+import ProductPage from "./pages/product/Product"
+
 
 
 
@@ -18,6 +20,8 @@ function App() {
           <Route path="/login" element={<Login />} />
 
           <Route path="/" element={<Home />} />
+
+          <Route path="/products" element={<ProductPage />} />
 
         </Routes>
       </BrowserRouter>
