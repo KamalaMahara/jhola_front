@@ -2,7 +2,7 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { Status } from "../globals/types/types";
 import axios from "axios";
 import type { AppDispatch } from "./store";
-import { API } from "../http";
+import { API, APIWITHTOKEN } from "../http";
 
 interface ILoginUser {
   email: string;
@@ -15,6 +15,8 @@ interface IUser {
   password?: string;
   token: string | null;
   role?: string | null;
+  profileImageUrl?: string | null;
+  createdAt?: string | null;
 }
 
 interface IAuthState {
@@ -32,6 +34,8 @@ const initialState: IAuthState = {
     email: "",
     token: token || null,
     role: role || null,
+    profileImageUrl: null,
+    createdAt: null,
   },
   status: token ? Status.SUCCESS : Status.LOADING,
 };
@@ -143,6 +147,46 @@ export function forgotPassword(data: { email: string | null }) {
     } catch (error) {
       console.log(error);
       dispatch(setStatus(Status.ERROR));
+    }
+  };
+}
+
+export function fetchMyProfile() {
+  return async function fetchMyProfileThunk(dispatch: AppDispatch) {
+    try {
+      const response = await APIWITHTOKEN.get("/profile");
+      if (response.status === 200) {
+        dispatch(setUser({
+          ...response.data.user,
+          token: localStorage.getItem("tokenHoYo")
+        }));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+}
+
+export function updateProfile(data: any) {
+  return async function updateProfileThunk(dispatch: AppDispatch) {
+    try {
+      dispatch(setStatus(Status.LOADING));
+      const response = await APIWITHTOKEN.patch("/profile", data, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      });
+      if (response.status === 200) {
+        dispatch(setUser({
+          ...response.data.user,
+          token: localStorage.getItem("tokenHoYo")
+        }));
+        dispatch(setStatus(Status.SUCCESS));
+      }
+    } catch (error) {
+      console.log(error);
+      dispatch(setStatus(Status.ERROR));
+      throw error;
     }
   };
 }

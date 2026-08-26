@@ -27,6 +27,6 @@ export interface IProduct {
 export interface IProducts {
   products: IProduct[],
   status: Status,
-  product: IProduct | null
-
+  product: IProduct | null,
+  totalProductsCount?: number
 }

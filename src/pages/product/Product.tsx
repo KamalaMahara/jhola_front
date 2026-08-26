@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ArrowRight, SlidersHorizontal } from 'lucide-react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 
@@ -9,20 +9,27 @@ import { fetchproducts } from '../../store/productSlice';
 const ProductPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [page, setPage] = useState(1);
+  const limit = 8;
+  const { products, status, totalProductsCount } = useAppSelector((state) => state.products);
   const [searchParams] = useSearchParams();
-
-  const { products } = useAppSelector((state) => state.products);
 
   const selectedCategoryId = searchParams.get('category');
   const selectedCategoryName = searchParams.get('name');
 
   useEffect(() => {
-    dispatch(fetchproducts());
-  }, [dispatch]);
+    dispatch(fetchproducts(page, limit));
+  }, [dispatch, page]);
 
   const filteredProducts = selectedCategoryId
     ? products.filter((product) => product.categoryId === selectedCategoryId)
     : products;
+
+  const handleLoadMore = () => {
+    setPage((prevPage) => prevPage + 1);
+  };
+
+  const hasMoreProducts = totalProductsCount !== undefined && products.length < totalProductsCount;
 
   return (
     <>
@@ -70,9 +77,23 @@ const ProductPage: React.FC = () => {
         </main>
 
         <footer className="py-20 border-t border-white/5 text-center">
-          <button className="text-sm font-bold text-gray-400 hover:text-[#F59E0B] uppercase tracking-widest group">
-            Load More <ArrowRight size={16} className="inline ml-2 group-hover:translate-x-1 transition-transform" />
-          </button>
+          {status === 'loading' && page > 1 ? (
+             <div className="flex items-center justify-center gap-3 text-gray-400">
+               <div className="w-5 h-5 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
+               Loading...
+             </div>
+          ) : hasMoreProducts ? (
+            <button 
+              onClick={handleLoadMore}
+              className="text-sm font-bold text-gray-400 hover:text-[#F59E0B] uppercase tracking-widest group cursor-pointer"
+            >
+              Load More <ArrowRight size={16} className="inline ml-2 group-hover:translate-x-1 transition-transform" />
+            </button>
+          ) : products.length > 0 ? (
+            <span className="text-sm font-bold text-gray-500 uppercase tracking-widest">
+              No more products
+            </span>
+          ) : null}
         </footer>
       </div>
     </>

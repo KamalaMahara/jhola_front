@@ -14,6 +14,7 @@ import Footer from "./globals/types/components/footer/footer"
 import MyOrders from "./pages/my-orders/MyOrders"
 import ResetPassword from "./pages/user/ResetPassword"
 import MyOrderDetail from "./pages/my-order-detail/MyOrderDetail"
+import Profile from "./pages/user/Profile"
 
 import AdminDashboard from "./pages/Admin/AdminDashboard"
 
@@ -41,6 +42,7 @@ function App() {
 
           <Route path="/my-checkout" element={<Checkout />} />
           <Route path="/my-orders" element={<MyOrders />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/my-orders/:id" element={<MyOrderDetail />} />
           <Route path="/admin" element={<AdminDashboard />} />
 

@@ -23,6 +23,7 @@ const MyOrderDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { items } = useAppSelector((store) => store.orders);
+  const dispatch = useAppDispatch();
   const [orderDetail, setOrderDetail] = useState<any>(null);
 
   const [showCancelModal, setShowCancelModal] = useState(false);
@@ -72,12 +73,10 @@ const MyOrderDetail: React.FC = () => {
   const isCancellable = CANCELLABLE_STATUSES.includes(
     parentOrder?.orderStatus?.toLowerCase()
   );
-  const dispatch = useAppDispatch();
-  const [cancelError, setCancelError] = useState("");
+
   const handleCancelSubmit = async () => {
     if (!cancelReason) return;
     setIsCancelling(true);
-    setCancelError("");
     try {
       const response = await APIWITHTOKEN.patch(`/order/cancel-order/${parentOrder.id}`);
       if (response.status === 200) {
@@ -85,10 +84,10 @@ const MyOrderDetail: React.FC = () => {
         setCancelSuccess(true);
         setShowCancelModal(false);
       } else {
-        setCancelError("Failed to cancel order.");
+        console.error("Failed to cancel order.");
       }
     } catch (err: any) {
-      setCancelError(err.response?.data?.message || "Failed to cancel order.");
+      console.error(err.response?.data?.message || "Failed to cancel order.");
     } finally {
       setIsCancelling(false);
     }
